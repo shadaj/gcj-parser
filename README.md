@@ -1,0 +1,1 @@
+A library for parsing Google Code Jam problems.

@@ -1,4 +1,4 @@
-package problems
+package tests
 
 import parser._
 
@@ -9,13 +9,9 @@ class MinScalarTestCase(val testCaseNumber: Int, n: Int, v1: Seq[Long], v2: Seq[
 }
 
 object MinScalarLauncher extends ProblemLauncher[MinScalarTestCase]("A-large-practice", 1) {
-  implicit object MinScalarConverter extends TestCaseSeqConverter[MinScalarTestCase] {
-    def fixedLineCount = 3
-    
-    def parseTestCase(fixedLines: Seq[String], lines: Iterator[String], testCaseNumber: Int) = {
-      new MinScalarTestCase(testCaseNumber, fixedLines(0).convert[Int], fixedLines(1).convertSeq[Long](), fixedLines(2).convertSeq[Long]())
+  val converter = new TestCaseSeqConverter[MinScalarTestCase] {
+    override def parseTestCase(lines: Iterator[String], testCaseNumber: Int) = {
+      new MinScalarTestCase(testCaseNumber, lines.next.convert[Int], lines.next.convertSeq[Long](), lines.next.convertSeq[Long]())
     }
   }
-
-  override val problem = new Problem[MinScalarTestCase]
 }

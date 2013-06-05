@@ -33,8 +33,10 @@ class Problem[T <: TestCase: TestCaseSeqConverter] {
 }
 
 abstract class ProblemLauncher[T <: TestCase](problemName: String, unneededLines: Int = 1) {
-  val problem: Problem[T]
+  val problem: Problem[T] = new Problem[T]()(converter)
 
+  val converter: TestCaseSeqConverter[T]
+  
   def main(args: Array[String]) = {
     problem.solve(problemName, unneededLines)
   }

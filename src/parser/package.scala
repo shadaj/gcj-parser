@@ -59,19 +59,14 @@ package object parser {
     def convert(string: String) = string.split('\n').toSeq
   }
 
-  trait TestCaseSeqConverter[T <: TestCase] extends Converter[Seq[T]] {
-    def fixedLineCount: Int
-    
-    def parseTestCase(fixedLines: Seq[String], currentLines: Iterator[String], testCaseNumber: Int): T
+  abstract class TestCaseSeqConverter[T <: TestCase] extends Converter[Seq[T]] {
+    def parseTestCase(lines: Iterator[String], testCaseNumber: Int): T
     
     def convert(string: String) = {
       val lines = Source.fromString(string).getLines
-      var testCases = Seq[T]()
-      while (lines.hasNext) {
-        val constantLines = lines.take(fixedLineCount).toSeq
-        testCases = testCases :+ parseTestCase(constantLines, lines, testCases.size + 1)
-      }
-      testCases
+      lines.foldLeft((1, Seq[T]())) {case ((n, testCases), cur) =>
+        (n + 1, testCases :+ parseTestCase(Iterator.single(cur) ++ lines, n))
+      }._2
     }
   }
 
@@ -80,5 +75,5 @@ package object parser {
     def parse[T <: TestCase](implicit converter: TestCaseSeqConverter[T]): Seq[T] =
       source.getLines.mkString("\n").convert(converter)
   }
-
+  
 }
