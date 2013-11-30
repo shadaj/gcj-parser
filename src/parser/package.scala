@@ -55,10 +55,6 @@ package object parser {
     def convert(string: String) = string.split(' ').toSeq
   }
 
-  object LineRepeatingConverter extends Converter[Seq[String]] {
-    def convert(string: String) = string.split('\n').toSeq
-  }
-
   abstract class TestCaseSeqConverter[T <: TestCase] extends Converter[Seq[T]] {
     def parseTestCase(lines: Iterator[String], testCaseNumber: Int): T
     
