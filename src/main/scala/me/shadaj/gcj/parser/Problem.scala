@@ -1,4 +1,4 @@
-package parser
+package me.shadaj.gcj.parser
 
 import java.io.PrintWriter
 
@@ -15,18 +15,18 @@ class Problem[T <: TestCase: TestCaseSeqConverter] {
 
     val testCases: Seq[T] = input.parse
 
-    val solutions = solve(testCases).sortBy(_.problemNumber)
+    val solutions = solve(testCases).sortBy(_._2)
 
     solutions.foreach { p =>
-      output.println("Case #" + p.problemNumber + ": " + p.answer)
+      output.println("Case #" + p._2 + ": " + p._1.answer)
     }
     output.close
   }
 
   def solve(testCases: Seq[T]) = {
     timed("Total Time: ") {
-      testCases.map(t => timed(s"Test Case #${t.testCaseNumber} took ") {
-        t.solve
+      testCases.zipWithIndex.map(t => timed(s"Test Case #${t._2 + 1} took ") {
+        (t._1.solve, t._2 + 1)
       })
     }
   }

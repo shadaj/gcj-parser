@@ -1,6 +1,5 @@
-package parser
+package me.shadaj.gcj.parser
 
 trait TestCase {
-  def testCaseNumber: Int
   def solve: Solution
 }

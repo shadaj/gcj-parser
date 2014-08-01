@@ -1,16 +1,37 @@
+package me.shadaj.gcj
+
 import scala.io.Source
+import scala.collection.mutable.Builder
+import scala.collection.generic.CanBuildFrom
 
 package object parser {
   implicit class ConvertingString(val string: String) extends AnyVal {
     def convert[T](implicit converter: Converter[T]): T = {
       converter.convert(string)
     }
-
-    def convertSeq[T](tokenizer: Converter[Seq[String]] = SpaceRepeatingConverter)(implicit converter: Converter[T]): Seq[T] = {
-      string.convert(tokenizer).map(_.convert(converter))
+    
+    def convertWithTokenizer[T <: Traversable[_]](tokenizer: Converter[Seq[String]])(implicit converter: CollectionConverter[T]) = {
+      converter.convertWithTokenizer(string, tokenizer)
     }
   }
 
+  implicit def singleToMulti[T, Col[_]](implicit singleConverter: Converter[T],
+                                        cbf: CanBuildFrom[Nothing, T, Col[T]]): CollectionConverter[Col[T]] = {
+    new CollectionConverter[Col[T]] {
+      override def convertWithTokenizer(string: String, tokenizer: Converter[Seq[String]]): Col[T] = {
+        string.convert(tokenizer).map(_.convert(singleConverter)).to(cbf)
+      }
+    }
+  }
+  
+  class CharRepeatingConverter(char: Char) extends Converter[Seq[String]] {
+    def convert(string: String) = string.split(char)
+  }
+
+  implicit object StringToStringConverter extends Converter[String] {
+    def convert(string: String) = string
+  }
+  
   implicit object BooleanConverter extends Converter[Boolean] {
     def convert(string: String) = string.toBoolean
   }
@@ -56,13 +77,13 @@ package object parser {
   }
 
   abstract class TestCaseSeqConverter[T <: TestCase] extends Converter[Seq[T]] {
-    def parseTestCase(lines: Iterator[String], testCaseNumber: Int): T
+    def parseTestCase(lines: Iterator[String]): T
     
     def convert(string: String) = {
       val lines = Source.fromString(string).getLines
-      lines.foldLeft((1, Seq[T]())) {case ((n, testCases), cur) =>
-        (n + 1, testCases :+ parseTestCase(Iterator.single(cur) ++ lines, n))
-      }._2
+      lines.foldLeft(Seq[T]()) {case (testCases, cur) =>
+        testCases :+ parseTestCase(Iterator.single(cur) ++ lines)
+      }
     }
   }
 
