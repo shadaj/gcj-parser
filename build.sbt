@@ -2,7 +2,7 @@ organization := "me.shadaj.gcj"
 
 name := "gcj-parser"
 
-scalaVersion := "2.11.0"
+scalaVersion := "2.11.2"
 
 version := "0.1"
 

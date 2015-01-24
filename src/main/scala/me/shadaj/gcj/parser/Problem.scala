@@ -7,9 +7,9 @@ import scala.io.Source
 import Timing._
 
 class Problem[T <: TestCase: TestCaseSeqConverter] {
-  def solve(problemName: String, unneededLines: Int) {
-    val input = Source.fromFile(problemName + ".in")
-    val output = new PrintWriter(problemName + ".out")
+  def solve(in: String, out: String, unneededLines: Int) {
+    val input = Source.fromFile(in)
+    val output = new PrintWriter(out)
 
     input.getLines.drop(unneededLines)
 
@@ -20,6 +20,7 @@ class Problem[T <: TestCase: TestCaseSeqConverter] {
     solutions.foreach { p =>
       output.println("Case #" + p._2 + ": " + p._1.answer)
     }
+
     output.close
   }
 
@@ -32,11 +33,11 @@ class Problem[T <: TestCase: TestCaseSeqConverter] {
   }
 }
 
-abstract class ProblemLauncher[T <: TestCase](problemName: String, unneededLines: Int = 1) {
+abstract class ProblemLauncher[T <: TestCase](unneededLines: Int = 1) {
   val converter: TestCaseSeqConverter[T]
   
   def main(args: Array[String]) = {
     val problem: Problem[T] = new Problem[T]()(converter)
-    problem.solve(problemName, unneededLines)
+    problem.solve(args(0), args(1), unneededLines)
   }
 }

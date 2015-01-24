@@ -5,9 +5,9 @@ import scala.io.Source
 import Timing.timed
 
 class RosalindProblem[T <: TestCase: TestCaseSeqConverter] extends Problem[T] {
-  override def solve(problemName: String, unneededLines: Int) {
-    val input = Source.fromFile(problemName + ".txt")
-    val output = new PrintWriter(problemName + ".out")
+  override def solve(in: String, out: String, unneededLines: Int) {
+    val input = Source.fromFile(in)
+    val output = new PrintWriter(out)
 
     input.getLines.drop(unneededLines)
 
@@ -31,11 +31,11 @@ class RosalindProblem[T <: TestCase: TestCaseSeqConverter] extends Problem[T] {
   }
 }
 
-abstract class RosalindProblemLauncher[T <: TestCase](problemName: String, unneededLines: Int = 1) {
+abstract class RosalindProblemLauncher[T <: TestCase](unneededLines: Int = 1) {
   val converter: TestCaseSeqConverter[T]
 
   def main(args: Array[String]) = {
     val problem: RosalindProblem[T] = new RosalindProblem[T]()(converter)
-    problem.solve(problemName, unneededLines)
+    problem.solve(args(0), args(1), unneededLines)
   }
 }
