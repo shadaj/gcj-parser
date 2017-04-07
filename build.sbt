@@ -2,13 +2,13 @@ organization := "me.shadaj"
 
 name := "gcj-parser"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.12.1"
 
 version := "0.1-SNAPSHOT"
 
 resolvers += "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
 
 sourceGenerators in Compile <+= baseDirectory map { dir =>
   val fileToWrite = dir / "src" / "gen" / "scala" / "me/shadaj/gcj/parser" / "TupleParsers.scala"
