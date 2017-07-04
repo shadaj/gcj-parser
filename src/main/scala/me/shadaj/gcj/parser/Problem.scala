@@ -26,16 +26,16 @@ class Problem[T <: TestCase: TestCaseSeqConverter] {
 
   def solve(testCases: Seq[T]) = {
     timed("Total Time: ") {
-      testCases.zipWithIndex.map(t => timed(s"Test Case #${t._2 + 1} took ") {
+      testCases.zipWithIndex.par.map(t => timed(s"Test Case #${t._2 + 1} took ") {
         (t._1.solve, t._2 + 1)
-      })
+      }).toVector
     }
   }
 }
 
 abstract class ProblemLauncher[T <: TestCase](unneededLines: Int = 1) {
   val converter: TestCaseSeqConverter[T]
-  
+
   def main(args: Array[String]) = {
     val problem: Problem[T] = new Problem[T]()(converter)
     problem.solve(args(0), args(1), unneededLines)
