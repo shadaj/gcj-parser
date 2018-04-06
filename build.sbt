@@ -2,16 +2,12 @@ organization := "me.shadaj"
 
 name := "gcj-parser"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.5"
 
-version := "0.1-SNAPSHOT"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test
 
-resolvers += "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
-
-sourceGenerators in Compile <+= baseDirectory map { dir =>
-  val fileToWrite = dir / "src" / "gen" / "scala" / "me/shadaj/gcj/parser" / "TupleParsers.scala"
+sourceGenerators in Compile += Def.task {
+  val fileToWrite = (baseDirectory in Compile).value / "src" / "gen" / "scala" / "me/shadaj/gcj/parser" / "TupleParsers.scala"
   val methods = (2 to 22).map { n =>
     s"""implicit def tuple${n}ToConverter[${(1 to n).map(t => s"T$t: Converter").mkString(", ")}]: CollectionConverter[(${(1 to n).map(t => s"T$t").mkString(", ")})] = {
        |  new CollectionConverter[(${(1 to n).map(t => s"T$t").mkString(", ")})] {
